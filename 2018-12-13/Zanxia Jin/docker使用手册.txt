@@ -1,0 +1,46 @@
+
+1. 在Hub上搜索你想要的镜像
+$ docker search caffe
+
+1. 从Hub上拉取镜像到本地，这里以caffe和TensorFlow的官方镜像为例
+caffe image: $ docker pull kaixhin/cuda-caffe
+tensorflow image: $ docker pull tensorflow/tensorflow
+
+导入镜像
+$ docker load <image.tar 
+
+添加镜像名称和tag
+docker tag imageid name:tag
+
+2. 查看本机上的本地镜像
+$ docker images
+
+2. 根据自己需要的镜像建立并启动容器 
+-v is to mount the pointed local work space to container dir. So if you change files under this dir in container, local files will change too.
+
+$ nvidia-docker run -it -d --net=host --name='welf_tensorflow1.4_py3' --privileged=true -p 8888:8888 -p 6006:6006  -v ~/Work/wlh:/root/wlh tensorflow/tensorflow:latest-gpu-py3 bash
+
+-name: 自己容器的名字，建议统一按照如下规则：自己的名字_镜像名字_备注， 例如： -name='welf_tensorflow1.4_py3'
+-v: 挂载“自己的”本地目录到容器里去, 将自己的工作目录挂上去后在容器中该目录下的改动将和本地同步。
+
+3. 建立好容器后可以通过ps命令查看处于活动状态的容器：
+$ docker ps
+
+3. 找到自己的容器对应id后通过exec命令进入容器:
+$ nvidia-docker exec -it container_id /bin/bash
+
+4. 嗯，在里边放飞自我吧 :)
+
+5. 退出容器:
+Ctrl+D or exit
+
+
+extra：
+1. 删除容器， emmm...不要随便删除别人的, 删自己的就好
+docker stop container_id
+docker rm container_id
+
+
+说明：
+nvidia-docker是在docker基础上封了一层对显卡的管理，使得用户不用在容器内部重新配置显卡驱动。
+因此如果是cpu任务可以直接用docker命令进入容器操作，但是如果是gpu任务请用nvidia-docker命令进行操作
